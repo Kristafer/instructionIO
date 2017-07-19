@@ -13,6 +13,8 @@ using InstructionIO.Data;
 using InstructionIO.Models;
 using InstructionIO.Services;
 using Newtonsoft.Json.Serialization;
+using Brik.Security.VkontakteMiddleware;
+using Microsoft.Extensions.Options;
 
 namespace InstructionIO
 {
@@ -22,7 +24,7 @@ namespace InstructionIO
         {
             var builder = new ConfigurationBuilder()
                  .SetBasePath(env.ContentRootPath)
-                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                  .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
             if (env.IsDevelopment())
@@ -40,22 +42,23 @@ namespace InstructionIO
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add framework services.
+            services.AddMvc()
+              .AddDataAnnotationsLocalization()
+              .AddViewLocalization()
+              .AddJsonOptions(options =>
+              {
+                  options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+              });
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+               options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
-
-
-            services.AddMvc()
-               .AddDataAnnotationsLocalization()
-               .AddViewLocalization()
-               .AddJsonOptions(options =>
-               {
-                   options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-               });
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.User.RequireUniqueEmail = false;
+            });
 
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
@@ -65,22 +68,40 @@ namespace InstructionIO
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
+            app.UseDeveloperExceptionPage();
 
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
-                app.UseBrowserLink();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
-            
+            var locOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+            app.UseRequestLocalization(locOptions.Value);
 
             app.UseIdentity();
+
+
+            app.UseFacebookAuthentication(new FacebookOptions
+            {
+                AppId = "1759352080772434",
+                AppSecret = "2fb7a5a03b35480e8c4888a2e276d152"
+            });
+            app.UseTwitterAuthentication(new TwitterOptions()
+            {
+                ConsumerKey = "KHEPZW0ZGGbvmgP5V9XltcPcb",
+                ConsumerSecret = "ryrlys72XFXCdQIrmAaqjfEMRh1dNSTy9GUwrGZb1SOAC18TFj"
+            });
+
+            app.UseGoogleAuthentication(new GoogleOptions()
+            {
+                ClientId = "699427373806-f40rmrjidlkpjnqaaehg9rogvf2mt0nq.apps.googleusercontent.com",
+                ClientSecret = "Sla1zfZRk6InvNx3Iiap9Mm9"
+            });
+
+
+            app.UseVkontakteAuthentication(new VkontakteOptions
+            {
+                ClientId = "6116045",
+                ClientSecret = "n4yqgHpACOE1g1qVB4rM",
+                SaveTokens = true
+
+            });
+
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
@@ -96,7 +117,6 @@ namespace InstructionIO
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
 
-              
                 // in case multiple SPAs required.
                 routes.MapSpaFallbackRoute("spa-fallback", new { controller = "home", action = "index" });
             });

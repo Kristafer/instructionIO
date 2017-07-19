@@ -1,0 +1,10 @@
+E:\IO_instruction\InstructionIO\InstructionIO\bin\Debug\netcoreapp1.1\InstructionIO.deps.json
+E:\IO_instruction\InstructionIO\InstructionIO\bin\Debug\netcoreapp1.1\InstructionIO.runtimeconfig.json
+E:\IO_instruction\InstructionIO\InstructionIO\bin\Debug\netcoreapp1.1\InstructionIO.runtimeconfig.dev.json
+E:\IO_instruction\InstructionIO\InstructionIO\obj\Debug\netcoreapp1.1\InstructionIO.csprojResolveAssemblyReference.cache
+E:\IO_instruction\InstructionIO\InstructionIO\bin\Debug\netcoreapp1.1\InstructionIO.dll
+E:\IO_instruction\InstructionIO\InstructionIO\bin\Debug\netcoreapp1.1\InstructionIO.pdb
+E:\IO_instruction\InstructionIO\InstructionIO\obj\Debug\netcoreapp1.1\InstructionIO.AssemblyInfo.cs
+E:\IO_instruction\InstructionIO\InstructionIO\obj\Debug\netcoreapp1.1\InstructionIO.dll
+E:\IO_instruction\InstructionIO\InstructionIO\obj\Debug\netcoreapp1.1\InstructionIO.pdb
+E:\IO_instruction\InstructionIO\InstructionIO\obj\Debug\netcoreapp1.1\UserSecretsAssemblyInfo.cs

@@ -12,6 +12,7 @@ using System.IO;
 using InstructionIO.Data;
 using InstructionIO.Models;
 using InstructionIO.Services;
+using Newtonsoft.Json.Serialization;
 
 namespace InstructionIO
 {
@@ -20,9 +21,9 @@ namespace InstructionIO
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+                 .SetBasePath(env.ContentRootPath)
+                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
             if (env.IsDevelopment())
             {
@@ -47,7 +48,14 @@ namespace InstructionIO
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddMvc();
+
+            services.AddMvc()
+               .AddDataAnnotationsLocalization()
+               .AddViewLocalization()
+               .AddJsonOptions(options =>
+               {
+                   options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+               });
 
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();

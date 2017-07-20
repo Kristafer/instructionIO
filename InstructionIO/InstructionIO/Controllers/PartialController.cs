@@ -11,5 +11,7 @@ namespace InstructionIO.Controllers
         public IActionResult ContactComponent() => PartialView();
 
         public IActionResult IndexComponent() => PartialView();
+
+        public IActionResult ProfileComponent() => PartialView();
     }
 }

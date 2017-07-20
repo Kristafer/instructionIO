@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import 'rxjs/add/operator/map'
 
 @Component({
     selector: 'my-app',
